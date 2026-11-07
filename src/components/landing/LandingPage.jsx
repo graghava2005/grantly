@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FAQS } from '../../data/faqData';
 import CircularProgress from '../common/CircularProgress';
@@ -19,14 +19,58 @@ import {
   Clock,
   Layers,
   Zap,
-  Star
+  Star,
+  Lock,
+  Compass,
+  Laptop,
+  Check
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const { setActiveTab, scholarships, savedIds, toggleSaveScholarship, openScholarshipDetails, user, setIsAuthModalOpen } = useApp();
-  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const {
+    setActiveTab,
+    scholarships,
+    savedIds,
+    toggleSaveScholarship,
+    openScholarshipDetails,
+    user,
+    profile,
+    setIsAuthModalOpen,
+    setAuthMode
+  } = useApp();
 
-  const featuredList = scholarships.slice(0, 4);
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const [featuredFilter, setFeaturedFilter] = useState('All');
+
+  // Featured schemes filtering
+  const featuredSchemes = useMemo(() => {
+    switch (featuredFilter) {
+      case 'HighValue':
+        return scholarships.filter(s => (s.awardAmountNum || 0) >= 100000).slice(0, 6);
+      case 'Government':
+        return scholarships.filter(s => s.category === 'Government').slice(0, 6);
+      case 'WomenInSTEM':
+        return scholarships.filter(s => s.category.includes('Women') || s.targetGender === 'Female').slice(0, 6);
+      case 'Engineering':
+        return scholarships.filter(s => (s.educationLevel || []).includes('B.Tech') || s.category === 'Engineering').slice(0, 6);
+      default:
+        return scholarships.slice(0, 6);
+    }
+  }, [scholarships, featuredFilter]);
+
+  const handleHeroFindScholarships = () => {
+    if (user) {
+      setActiveTab('dashboard');
+    } else {
+      setAuthMode('demo');
+      setIsAuthModalOpen(true);
+    }
+  };
+
+  const handleHeroExplore = () => {
+    setActiveTab('discovery');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div>
@@ -34,8 +78,8 @@ export default function LandingPage() {
       <section
         style={{
           position: 'relative',
-          padding: '5rem 0 4.5rem',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          padding: '4.5rem 0 3rem',
+          background: 'radial-gradient(ellipse at 50% -10%, rgba(99, 102, 241, 0.2) 0%, rgba(67, 56, 202, 0.05) 50%, transparent 80%)',
           overflow: 'hidden'
         }}
       >
@@ -46,20 +90,22 @@ export default function LandingPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.4rem 1rem',
+              padding: '0.45rem 1.15rem',
               borderRadius: 'var(--radius-full)',
               background: 'var(--bg-card)',
               border: '1px solid var(--border-color)',
               boxShadow: 'var(--shadow-sm)',
               marginBottom: '1.75rem',
-              fontSize: '0.85rem',
+              fontSize: '0.875rem',
               fontWeight: 600,
               color: 'var(--accent-violet)'
             }}
           >
             <Sparkles size={16} />
             <span>The Unified Indian Scholarship Discovery & Management Platform</span>
-            <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>2026 Edition</span>
+            <span className="badge badge-emerald" style={{ fontSize: '0.68rem', padding: '0.2rem 0.55rem' }}>
+              2026 Edition
+            </span>
           </div>
 
           {/* Main Headline */}
@@ -83,7 +129,7 @@ export default function LandingPage() {
             style={{
               fontSize: 'clamp(1.05rem, 2vw, 1.25rem)',
               color: 'var(--text-secondary)',
-              maxWidth: '720px',
+              maxWidth: '740px',
               margin: '0 auto 2.5rem',
               lineHeight: 1.6
             }}
@@ -91,16 +137,10 @@ export default function LandingPage() {
             Stop missing out on government quotas and CSR funds. Grantly uses algorithmic AI matching to connect Indian college students with verified scholarships in minutes.
           </p>
 
-          {/* CTAs */}
-          <div className="flex justify-center items-center gap-4 wrap" style={{ marginBottom: '3.5rem' }}>
+          {/* Primary Action Buttons */}
+          <div className="flex justify-center items-center gap-4 wrap" style={{ marginBottom: '2.5rem' }}>
             <button
-              onClick={() => {
-                if (user) {
-                  setActiveTab('dashboard');
-                } else {
-                  setIsAuthModalOpen(true);
-                }
-              }}
+              onClick={handleHeroFindScholarships}
               className="btn btn-primary btn-lg"
             >
               <span>Find My Scholarships</span>
@@ -108,18 +148,54 @@ export default function LandingPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab('discovery')}
+              onClick={handleHeroExplore}
               className="btn btn-secondary btn-lg"
             >
-              <Search size={18} />
+              <Compass size={18} />
               <span>Explore Opportunities</span>
             </button>
+          </div>
+
+          {/* Quick-Hop Category Chips */}
+          <div className="flex items-center justify-center gap-2 wrap" style={{ marginBottom: '2.5rem' }}>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 600, marginRight: '0.25rem' }}>
+              Popular Streams:
+            </span>
+            {['Engineering & B.Tech', 'Medical MBBS', 'Women in STEM', 'Post-Matric OBC/SC/ST', 'NSP Central Schemes'].map((tag, idx) => (
+              <button
+                key={idx}
+                onClick={handleHeroExplore}
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-full)',
+                  padding: '0.25rem 0.75rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent-violet)';
+                  e.currentTarget.style.color = 'var(--accent-violet)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
 
           {/* Trust Badges */}
           <div
             className="flex items-center justify-center gap-6 wrap"
-            style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}
+            style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '3rem' }}
           >
             <div className="flex items-center gap-2">
               <CheckCircle2 size={18} color="#10b981" />
@@ -134,14 +210,181 @@ export default function LandingPage() {
               <span>Rule-Based Eligibility Guarantee</span>
             </div>
           </div>
+
+          {/* 1A. HERO PREVIEW: PREMIUM DASHBOARD MOCKUP */}
+          <div className="hero-preview-container">
+            <div className="hero-preview-glow" />
+            <div className="hero-preview-browser">
+              {/* Browser Mock Window Header */}
+              <div className="browser-header-bar">
+                <div className="browser-dots">
+                  <span className="browser-dot" style={{ background: '#f87171' }} />
+                  <span className="browser-dot" style={{ background: '#fbbf24' }} />
+                  <span className="browser-dot" style={{ background: '#34d399' }} />
+                </div>
+                <div className="browser-address">
+                  <Lock size={12} color="#10b981" />
+                  <span>https://grantly.in/app/ai-eligibility-matcher</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>Live Pipeline</span>
+                </div>
+              </div>
+
+              {/* Inside Browser Canvas */}
+              <div style={{ padding: '1.75rem', background: 'var(--bg-main)', textAlign: 'left' }}>
+                {/* Active Student Ribbon */}
+                <div
+                  style={{
+                    background: 'var(--bg-card)',
+                    padding: '1rem 1.25rem',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--border-color)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                    marginBottom: '1.25rem'
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=120"
+                      alt="Student"
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-violet)' }}
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <strong style={{ fontSize: '0.95rem' }}>{profile?.name || 'Aarav Sharma'}</strong>
+                        <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>{profile?.educationLevel || 'B.Tech'} CSE</span>
+                      </div>
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        Score: <strong>{profile?.percentage || 82.5}%</strong> • Income: <strong>₹{((profile?.familyIncome || 240000)/100000).toFixed(1)}L</strong> • State: <strong>{profile?.domicileState || 'Maharashtra'}</strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>Algorithmic Status</span>
+                      <strong style={{ fontSize: '0.875rem', color: 'var(--accent-emerald)' }}>4 High Matches Qualified</strong>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('eligibility')}
+                      className="btn btn-secondary btn-sm"
+                    >
+                      Audit Rules
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3 Interactive Cards Inside Mockup */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                  {/* Mock Card 1 */}
+                  <div
+                    className="card"
+                    style={{
+                      padding: '1.15rem',
+                      background: 'var(--bg-card)',
+                      borderRadius: 'var(--radius-md)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      borderLeft: '4px solid var(--accent-violet)'
+                    }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start" style={{ marginBottom: '0.35rem' }}>
+                        <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>Merit-cum-Means</span>
+                        <CircularProgress value={95} size={36} strokeWidth={3} />
+                      </div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.25rem' }}>
+                        Reliance Foundation UG Scholarship
+                      </h4>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                        Full undergraduate grant + corporate mentor circle.
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center" style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+                      <strong style={{ color: 'var(--accent-emerald)' }}>₹2,00,000</strong>
+                      <span style={{ color: 'var(--accent-violet)', fontWeight: 600 }}>Under Review</span>
+                    </div>
+                  </div>
+
+                  {/* Mock Card 2 */}
+                  <div
+                    className="card"
+                    style={{
+                      padding: '1.15rem',
+                      background: 'var(--bg-card)',
+                      borderRadius: 'var(--radius-md)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      borderLeft: '4px solid var(--accent-emerald)'
+                    }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start" style={{ marginBottom: '0.35rem' }}>
+                        <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>Government (NSP)</span>
+                        <CircularProgress value={88} size={36} strokeWidth={3} />
+                      </div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.25rem' }}>
+                        Central Sector Scheme for College Students
+                      </h4>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                        MoE direct benefit transfer for top 80th percentile students.
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center" style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+                      <strong style={{ color: 'var(--accent-emerald)' }}>₹20,000 / yr</strong>
+                      <span style={{ color: 'var(--accent-amber)', fontWeight: 600 }}>18 Days Left</span>
+                    </div>
+                  </div>
+
+                  {/* Mock Card 3 */}
+                  <div
+                    className="card"
+                    style={{
+                      padding: '1.15rem',
+                      background: 'var(--bg-card)',
+                      borderRadius: 'var(--radius-md)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      borderLeft: '4px solid #f59e0b'
+                    }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start" style={{ marginBottom: '0.35rem' }}>
+                        <span className="badge badge-amber" style={{ fontSize: '0.65rem' }}>CSR Industry</span>
+                        <CircularProgress value={90} size={36} strokeWidth={3} />
+                      </div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.25rem' }}>
+                        HDFC Bank Badhte Kadam Scholarship
+                      </h4>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                        Direct crisis & merit assistance for households &lt; ₹6 Lakhs.
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center" style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+                      <strong style={{ color: 'var(--accent-emerald)' }}>₹1,00,000</strong>
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Applied</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. LIVE STATISTICS SECTION */}
-      <section style={{ borderY: '1px solid var(--border-color)', background: 'var(--bg-card)', padding: '2.5rem 0' }}>
+      {/* 2. LIVE STATISTICS BAR */}
+      <section style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-card)', padding: '2.5rem 0' }}>
         <div className="container">
           <div className="grid-cols-4 gap-6" style={{ textAlign: 'center' }}>
-            <div style={{ padding: '1rem' }}>
+            <div style={{ padding: '0.75rem' }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary-indigo)', letterSpacing: '-0.02em' }}>
                 ₹500Cr+
               </div>
@@ -150,7 +393,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div style={{ padding: '1rem' }}>
+            <div style={{ padding: '0.75rem' }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent-violet)', letterSpacing: '-0.02em' }}>
                 1,20,000+
               </div>
@@ -159,7 +402,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div style={{ padding: '1rem' }}>
+            <div style={{ padding: '0.75rem' }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent-emerald)', letterSpacing: '-0.02em' }}>
                 98.4%
               </div>
@@ -168,7 +411,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div style={{ padding: '1rem' }}>
+            <div style={{ padding: '0.75rem' }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f59e0b', letterSpacing: '-0.02em' }}>
                 18+
               </div>
@@ -180,8 +423,180 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. HOW IT WORKS */}
-      <section style={{ padding: '5rem 0' }}>
+      {/* 3. FEATURED SCHOLARSHIPS SHOWCASE (PLACED PROMINENTLY BELOW HERO) */}
+      <section style={{ padding: '5rem 0', background: 'var(--bg-main)' }}>
+        <div className="container">
+          <div className="flex justify-between items-end wrap gap-4" style={{ marginBottom: '2rem' }}>
+            <div>
+              <span className="badge badge-indigo" style={{ marginBottom: '0.5rem' }}>
+                High-Value Verified Grants
+              </span>
+              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                Featured Opportunities for Indian Students
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', marginTop: '0.25rem' }}>
+                Direct financial aid from central government portals, state departments, and accredited CSR foundations.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setActiveTab('discovery')}
+              className="btn btn-secondary"
+            >
+              <span>Explore All 18+ Schemes</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+
+          {/* Filter Pills for Featured Section */}
+          <div className="flex items-center gap-2 wrap" style={{ marginBottom: '2rem' }}>
+            {[
+              { id: 'All', label: 'All Top Picks' },
+              { id: 'HighValue', label: 'High Grant (₹1L+)' },
+              { id: 'Government', label: 'Government & NSP' },
+              { id: 'WomenInSTEM', label: 'Women in STEM' },
+              { id: 'Engineering', label: 'Engineering & Tech' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setFeaturedFilter(tab.id)}
+                className={`btn btn-sm ${featuredFilter === tab.id ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ borderRadius: 'var(--radius-full)' }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid-cols-3 gap-6">
+            {featuredSchemes.map((scholarship) => {
+              const isSaved = savedIds.includes(scholarship.id);
+
+              return (
+                <div
+                  key={scholarship.id}
+                  className="card card-interactive"
+                  style={{
+                    padding: '1.75rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    position: 'relative'
+                  }}
+                  onClick={() => openScholarshipDetails(scholarship)}
+                >
+                  <div>
+                    {/* Header Row */}
+                    <div className="flex justify-between items-start" style={{ marginBottom: '0.875rem' }}>
+                      <div className="flex items-center gap-1.5 wrap">
+                        <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>
+                          {scholarship.category}
+                        </span>
+                        {scholarship.verified && (
+                          <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>
+                            <ShieldCheck size={11} /> Verified
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => toggleSaveScholarship(scholarship.id)}
+                          className="btn btn-secondary btn-icon"
+                          style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                          title={isSaved ? 'Remove bookmark' : 'Bookmark scholarship'}
+                        >
+                          <Bookmark size={14} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize: '1.15rem',
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        lineHeight: 1.35,
+                        marginBottom: '0.35rem'
+                      }}
+                    >
+                      {scholarship.title}
+                    </h3>
+
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.875rem' }}>
+                      Offered by {scholarship.provider}
+                    </p>
+
+                    <p
+                      style={{
+                        fontSize: '0.85rem',
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.5,
+                        marginBottom: '1.25rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {scholarship.description}
+                    </p>
+                  </div>
+
+                  <div>
+                    {/* Key Attributes Bar */}
+                    <div
+                      style={{
+                        background: 'var(--bg-card-subtle)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '0.75rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '1rem'
+                      }}
+                    >
+                      <div>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>Grant Award</span>
+                        <strong style={{ color: 'var(--accent-emerald)', fontSize: '1rem' }}>{scholarship.awardAmount}</strong>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <CircularProgress value={scholarship.matchScore} size={40} strokeWidth={3.5} />
+                      </div>
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="flex justify-between items-center">
+                      <span
+                        className={`badge ${scholarship.daysLeft <= 15 ? 'badge-rose' : 'badge-amber'}`}
+                        style={{ fontSize: '0.7rem' }}
+                      >
+                        <Clock size={11} /> {scholarship.daysLeft}d left
+                      </span>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openScholarshipDetails(scholarship);
+                        }}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <span>View Details</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. HOW IT WORKS */}
+      <section style={{ padding: '5rem 0', background: 'var(--bg-card)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <span className="badge badge-indigo" style={{ marginBottom: '0.75rem' }}>Simple 3-Step Process</span>
@@ -194,8 +609,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="card" style={{ padding: '2rem', position: 'relative' }}>
+            <div className="card" style={{ padding: '2rem' }}>
               <div
                 style={{
                   width: '48px',
@@ -221,8 +635,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="card" style={{ padding: '2rem', position: 'relative' }}>
+            <div className="card" style={{ padding: '2rem' }}>
               <div
                 style={{
                   width: '48px',
@@ -248,8 +661,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="card" style={{ padding: '2rem', position: 'relative' }}>
+            <div className="card" style={{ padding: '2rem' }}>
               <div
                 style={{
                   width: '48px',
@@ -278,110 +690,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 4. FEATURED SCHOLARSHIPS */}
-      <section style={{ padding: '5rem 0', background: 'var(--bg-card-subtle)' }}>
-        <div className="container">
-          <div className="flex justify-between items-end" style={{ marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <span className="badge badge-indigo" style={{ marginBottom: '0.5rem' }}>High-Value Opportunities</span>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                Featured Indian Scholarships
-              </h2>
-            </div>
-            <button
-              onClick={() => setActiveTab('discovery')}
-              className="btn btn-secondary"
-            >
-              <span>View All 18+ Schemes</span>
-              <ArrowRight size={16} />
-            </button>
-          </div>
-
-          <div className="grid-cols-2 gap-6">
-            {featuredList.map((scholarship) => {
-              const isSaved = savedIds.includes(scholarship.id);
-              return (
-                <div key={scholarship.id} className="card" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column' }}>
-                  <div className="flex justify-between items-start" style={{ marginBottom: '1rem' }}>
-                    <div style={{ flex: 1, paddingRight: '1rem' }}>
-                      <div className="flex items-center gap-2" style={{ marginBottom: '0.35rem' }}>
-                        <span className="badge badge-indigo">{scholarship.category}</span>
-                        {scholarship.verified && (
-                          <span className="badge badge-emerald">
-                            <ShieldCheck size={12} /> Verified
-                          </span>
-                        )}
-                      </div>
-                      <h3
-                        onClick={() => openScholarshipDetails(scholarship)}
-                        style={{
-                          fontSize: '1.2rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          color: 'var(--text-primary)',
-                          lineHeight: 1.3
-                        }}
-                      >
-                        {scholarship.title}
-                      </h3>
-                      <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Offered by {scholarship.provider}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <CircularProgress value={scholarship.matchScore} size={48} strokeWidth={4} />
-                      <button
-                        onClick={() => toggleSaveScholarship(scholarship.id)}
-                        className="btn btn-secondary btn-icon"
-                        style={{ width: '38px', height: '38px', borderRadius: '50%' }}
-                        title={isSaved ? 'Remove bookmark' : 'Save scholarship'}
-                      >
-                        <Bookmark size={16} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '1.25rem', flex: 1 }}>
-                    {scholarship.description}
-                  </p>
-
-                  <div
-                    style={{
-                      borderTop: '1px solid var(--border-color)',
-                      paddingTop: '1rem',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    <div>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Award Grant</span>
-                      <strong style={{ fontSize: '1.1rem', color: 'var(--accent-emerald)' }}>{scholarship.awardAmount}</strong>
-                    </div>
-
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Deadline</span>
-                      <strong style={{ color: 'var(--text-primary)' }}>{scholarship.deadline}</strong>
-                    </div>
-
-                    <button
-                      onClick={() => openScholarshipDetails(scholarship)}
-                      className="btn btn-primary btn-sm"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* 5. BENEFITS SECTION */}
-      <section style={{ padding: '5rem 0' }}>
+      <section style={{ padding: '5rem 0', background: 'var(--bg-main)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <span className="badge badge-emerald" style={{ marginBottom: '0.75rem' }}>Why Grantly</span>
@@ -505,7 +815,7 @@ export default function LandingPage() {
       </section>
 
       {/* 7. FREQUENTLY ASKED QUESTIONS */}
-      <section style={{ padding: '5rem 0' }}>
+      <section style={{ padding: '5rem 0', background: 'var(--bg-main)' }}>
         <div className="container" style={{ maxWidth: '840px' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <span className="badge badge-neutral" style={{ marginBottom: '0.75rem' }}>Clear Answers</span>

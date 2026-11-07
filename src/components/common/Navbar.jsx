@@ -335,11 +335,12 @@ export default function Navbar() {
             background: 'var(--bg-card)',
             borderBottom: '1px solid var(--border-color)',
             boxShadow: 'var(--shadow-xl)',
-            padding: '1rem',
-            zIndex: 90,
+            padding: '1.25rem 1rem',
+            zIndex: 100,
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            animation: 'fadeIn 0.2s ease-out'
           }}
         >
           {navItems.map((item) => {
@@ -383,6 +384,35 @@ export default function Navbar() {
               </button>
             );
           })}
+
+          {/* Mobile Fast-Track Actions */}
+          <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <button
+              onClick={() => {
+                setIsChatOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              className="btn btn-outline"
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              <Sparkles size={16} />
+              <span>Ask Grantly AI Advisor</span>
+            </button>
+
+            {!user && (
+              <button
+                onClick={() => {
+                  setAuthMode('demo');
+                  setIsAuthModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="btn btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <span>Instant Demo Student Access</span>
+              </button>
+            )}
+          </div>
         </div>
       )}
 
