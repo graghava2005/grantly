@@ -33,6 +33,8 @@ export default function GrantlyAssistant() {
   const suggestedQuestions = [
     "Scholarships for B.Tech under ₹3L income?",
     "Exclusive scholarships for female engineering students?",
+    "MBBS and Medical Healthcare grants?",
+    "Reserved quotas for OBC/SC/ST students?",
     "What documents are needed for National Scholarship Portal (NSP)?",
     "How to write a winning Statement of Purpose (SOP)?",
     "Compare Reliance Foundation vs HDFC Badhte Kadam"
@@ -74,7 +76,36 @@ export default function GrantlyAssistant() {
       };
     }
 
-    // 3. NSP / Documents Question
+    // 3. Medical / Healthcare
+    if (q.includes('medical') || q.includes('mbbs') || q.includes('doctor') || q.includes('health') || q.includes('nursing')) {
+      const med = scholarships.filter(s => (s.educationLevel || []).includes('MBBS') || s.category === 'Healthcare');
+      return {
+        text: `Here are the premier medical and healthcare scholarships in our verified catalog:\n\n• **Tata Trusts Medical and Healthcare Scholarship**: Supports MBBS/BDS/Nursing students with up to ₹1,50,000/yr for tuition and clinical expenses.\n• **LIC Golden Jubilee Scholarship**: Awards ₹40,000/yr specifically for students in MBBS and BDS programs.\n• **Colgate Keep India Smiling**: Up to ₹75,000/yr for students enrolled in BDS programs.`,
+        recommendations: med.slice(0, 3)
+      };
+    }
+
+    // 4. Caste & Category Quotas (OBC, SC, ST, EWS)
+    if (q.includes('obc') || q.includes('sc') || q.includes('st') || q.includes('caste') || q.includes('reservation') || q.includes('quota')) {
+      const catSchemes = scholarships.filter(s =>
+        (s.targetCategory || []).some(c => ['OBC', 'SC', 'ST'].includes(c))
+      );
+      return {
+        text: `Verified Indian Government and PSU scholarships dedicated to reserved communities:\n\n• **PM YASASVI Post-Matric**: Central Ministry scheme for OBC, EBC, and Nomadic community students with family income < ₹2.5L.\n• **ONGC SC/ST Scholarship Scheme**: ₹48,000/yr grant specifically reserved for Scheduled Caste & Scheduled Tribe students in engineering and medicine.\n• **Central Sector Scheme (NSP)**: Proportional reservation according to central norms for top percentile students.`,
+        recommendations: catSchemes.slice(0, 3)
+      };
+    }
+
+    // 5. Specially-Abled / Disability Support
+    if (q.includes('disability') || q.includes('pwd') || q.includes('differently') || q.includes('handicap') || q.includes('saksham')) {
+      const pwdSchemes = scholarships.filter(s => s.category === 'Disability Support');
+      return {
+        text: `Schemes supporting specially-abled students with certified benchmark disability (≥ 40%):\n\n• **AICTE Saksham Scholarship**: ₹50,000 per year towards tuition and assistive devices for students in technical degree/diploma courses.\n• **HDFC Badhte Kadam**: Prioritizes students with benchmark disabilities.\n• Valid UDID Card or Civil Surgeon Medical Certificate is required.`,
+        recommendations: pwdSchemes
+      };
+    }
+
+    // 6. NSP / Documents Question
     if (q.includes('nsp') || q.includes('document') || q.includes('paper') || q.includes('certificate')) {
       return {
         text: `To ensure seamless approval on the National Scholarship Portal (NSP) and state portals, prepare these mandatory documents:\n\n1. **Aadhaar Card Linked to Bank**: Ensure NPCI Direct Benefit Transfer (DBT) is active in your bank account.\n2. **Income Certificate**: Issued by competent state authority (Tehsildar/Revenue Circle Officer) within the current fiscal year.\n3. **Bonafide Student Certificate**: Duly stamped by your college Dean/Registrar.\n4. **Previous Marksheets**: 10th and 12th original passing certificates.\n5. **Caste/Category Certificate**: If applying under OBC (Non-Creamy Layer), SC, ST, or EWS quotas.`,

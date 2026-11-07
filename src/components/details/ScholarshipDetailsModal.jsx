@@ -324,11 +324,14 @@ export default function ScholarshipDetailsModal() {
           </div>
 
           <div className="flex items-center gap-3">
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'none' }} id="apply-portal-hint">
+              Opens {selectedScholarship.provider} Official Portal
+            </span>
             <button
               onClick={handleApply}
               className="btn btn-primary btn-lg"
             >
-              <span>Apply & Add to Tracker</span>
+              <span>Apply on Official Portal & Track</span>
               <ExternalLink size={16} />
             </button>
           </div>

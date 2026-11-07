@@ -144,7 +144,11 @@ export default function ScholarshipCompare() {
         </div>
       ) : (
         /* COMPARISON TABLE */
-        <div className="card" style={{ overflowX: 'auto', padding: '0', borderRadius: 'var(--radius-xl)' }}>
+        <div>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>
+            ⇄ Swipe horizontally on mobile / tablet to inspect all comparison columns
+          </span>
+          <div className="card" style={{ overflowX: 'auto', padding: '0', borderRadius: 'var(--radius-xl)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '700px' }}>
             <tbody>
               {/* ROW 1: Header / Title Card */}
@@ -325,6 +329,7 @@ export default function ScholarshipCompare() {
               </tr>
             </tbody>
           </table>
+        </div>
         </div>
       )}
     </div>

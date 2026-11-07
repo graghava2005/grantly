@@ -29,12 +29,14 @@ export default function ScholarshipDiscovery() {
     toggleCompareScholarship,
     openScholarshipDetails,
     addApplication,
-    profile
+    profile,
+    discoveryFilter,
+    setDiscoveryFilter
   } = useApp();
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(discoveryFilter || 'All');
   const [selectedTargetCaste, setSelectedTargetCaste] = useState('All');
   const [selectedEducationLevel, setSelectedEducationLevel] = useState('All');
   const [selectedGender, setSelectedGender] = useState('All');
@@ -42,6 +44,12 @@ export default function ScholarshipDiscovery() {
   const [sortBy, setSortBy] = useState('matchScore'); // 'matchScore' | 'deadline' | 'amount' | 'title'
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [onlyEligible, setOnlyEligible] = useState(false);
+
+  React.useEffect(() => {
+    if (discoveryFilter) {
+      setSelectedCategory(discoveryFilter);
+    }
+  }, [discoveryFilter]);
 
   // Available unique options for dropdowns
   const categories = ['All', 'Government', 'Merit-cum-Means', 'CSR', 'Women in STEM', 'Healthcare', 'Engineering'];
@@ -135,6 +143,7 @@ export default function ScholarshipDiscovery() {
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('All');
+    setDiscoveryFilter('All');
     setSelectedTargetCaste('All');
     setSelectedEducationLevel('All');
     setSelectedGender('All');
@@ -148,17 +157,21 @@ export default function ScholarshipDiscovery() {
       {/* Title & Subtitle */}
       <div className="flex justify-between items-end wrap gap-4" style={{ marginBottom: '2rem' }}>
         <div>
-          <div className="flex items-center gap-2" style={{ marginBottom: '0.4rem' }}>
-            <span className="badge badge-indigo">Direct Indian Grants</span>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              {scholarships.length} Verified Records
+          <div className="flex items-center gap-2 wrap" style={{ marginBottom: '0.4rem' }}>
+            <span className="badge badge-indigo">Official Indian Grants</span>
+            <span className="badge badge-emerald">18 Curated Schemes</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              NSP & Corporate CSR Backed
             </span>
           </div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
             Scholarship Discovery Directory
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
-            Live algorithmic matching calibrated against your profile: <strong>{profile?.category || 'General'}</strong>, <strong>{profile?.course || 'Degree'}</strong>, Family Income <strong>₹{(Number(profile?.familyIncome || 0)/100000).toFixed(1)}L</strong>.
+            Algorithmic matching calibrated against: <strong>{profile?.category || 'General'}</strong>, <strong>{profile?.course || 'Degree'}</strong>, Family Income <strong>₹{(Number(profile?.familyIncome || 0)/100000).toFixed(1)}L</strong>.
+          </p>
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+            All records are modeled on published guidelines with direct links to official government and trust portals.
           </p>
         </div>
 

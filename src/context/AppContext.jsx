@@ -141,6 +141,23 @@ export const AppProvider = ({ children }) => {
     setSelectedScholarship(null);
   };
 
+  // Discovery Filter State for Cross-Page Deep-Linking
+  const [discoveryFilter, setDiscoveryFilter] = useState('All');
+
+  const navigateToDiscovery = (category = 'All') => {
+    setDiscoveryFilter(category);
+    setActiveTab('discovery');
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Delete Application from Tracker
+  const deleteApplication = (appId) => {
+    setApplications(prev => prev.filter(app => app.id !== appId));
+    notify('Application removed from tracker', 'info');
+  };
+
   // Update Application in Tracker
   const updateApplicationStatus = (appId, newStatus, newNotes = null) => {
     setApplications(prev =>
@@ -245,7 +262,11 @@ export const AppProvider = ({ children }) => {
         toggleSaveScholarship,
         applications,
         updateApplicationStatus,
+        deleteApplication,
         addApplication,
+        discoveryFilter,
+        setDiscoveryFilter,
+        navigateToDiscovery,
         compareList,
         toggleCompareScholarship,
         removeFromCompare,

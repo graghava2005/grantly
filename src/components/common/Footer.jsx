@@ -191,6 +191,22 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Academic / Hackathon Evaluation Disclaimer */}
+        <div
+          style={{
+            background: 'var(--bg-card-subtle)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.875rem 1.25rem',
+            marginBottom: '2.5rem',
+            fontSize: '0.8125rem',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.55
+          }}
+        >
+          <strong style={{ color: 'var(--text-primary)' }}>FAIE Evaluation & Data Provenance Notice:</strong> GRANTLY is an academic evaluation platform developed for THE OUTPOST Hackathon. All 18 scholarship profiles are calibrated directly against official Indian government portals (National Scholarship Portal, AICTE, MoE) and accredited corporate CSR foundations (Reliance, Tata Trusts, HDFC, Siemens, Adobe). Students should always cross-reference live deadlines on respective official portals.
+        </div>
+
         {/* Bottom copyright bar */}
         <div
           style={{

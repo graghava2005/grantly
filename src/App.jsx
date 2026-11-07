@@ -81,7 +81,7 @@ function MainAppContent() {
             cursor: 'pointer',
             transition: 'transform 0.2s ease, box-shadow 0.2s ease'
           }}
-          className="pulse-badge"
+          className="pulse-badge floating-ai-trigger"
           title="Open Grantly AI Advisor"
         >
           <Sparkles size={18} />

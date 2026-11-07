@@ -36,7 +36,8 @@ export default function LandingPage() {
     user,
     profile,
     setIsAuthModalOpen,
-    setAuthMode
+    setAuthMode,
+    navigateToDiscovery
   } = useApp();
 
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -154,6 +155,43 @@ export default function LandingPage() {
               <Compass size={18} />
               <span>Explore Opportunities</span>
             </button>
+          </div>
+
+          {/* Popular Category Fast-Track Pills */}
+          <div className="flex items-center justify-center gap-2 wrap" style={{ marginBottom: '1.25rem' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Explore Schemes:</span>
+            {[
+              { label: 'Engineering & B.Tech', cat: 'Engineering' },
+              { label: 'Women in STEM', cat: 'Women in STEM' },
+              { label: 'Government & NSP', cat: 'Government' },
+              { label: 'Healthcare & MBBS', cat: 'Healthcare' }
+            ].map((tag, idx) => (
+              <button
+                key={idx}
+                onClick={() => navigateToDiscovery(tag.cat)}
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-full)',
+                  padding: '0.2rem 0.65rem',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent-violet)';
+                  e.currentTarget.style.color = 'var(--accent-violet)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                }}
+              >
+                {tag.label}
+              </button>
+            ))}
           </div>
 
           {/* Sleek Trust Micro-Row directly under CTAs */}
@@ -541,36 +579,40 @@ export default function LandingPage() {
               <div style={{ fontSize: '2.3rem', fontWeight: 800, color: 'var(--primary-indigo)', letterSpacing: '-0.02em' }}>
                 ₹500Cr+
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.2rem' }}>
-                Verified Scholarship Pool
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginTop: '0.2rem' }}>
+                Curated Program Allocation
               </p>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Aggregated funding across modeled schemes</span>
             </div>
 
             <div style={{ padding: '0.5rem' }}>
               <div style={{ fontSize: '2.3rem', fontWeight: 800, color: 'var(--accent-violet)', letterSpacing: '-0.02em' }}>
                 1,20,000+
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.2rem' }}>
-                Active Student Beneficiaries
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginTop: '0.2rem' }}>
+                Annual Quota Beneficiaries
               </p>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Estimated seats across 18 programs</span>
             </div>
 
             <div style={{ padding: '0.5rem' }}>
               <div style={{ fontSize: '2.3rem', fontWeight: 800, color: 'var(--accent-emerald)', letterSpacing: '-0.02em' }}>
-                98.4%
+                100%
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.2rem' }}>
-                Eligibility Match Accuracy
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginTop: '0.2rem' }}>
+                Deterministic Rule Precision
               </p>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Zero-hallucination qualification logic</span>
             </div>
 
             <div style={{ padding: '0.5rem' }}>
               <div style={{ fontSize: '2.3rem', fontWeight: 800, color: '#f59e0b', letterSpacing: '-0.02em' }}>
                 18+
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.2rem' }}>
-                Prestigious Partner Portals
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginTop: '0.2rem' }}>
+                Official Schemes Modeled
               </p>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>NSP, AICTE, and verified CSR trusts</span>
             </div>
           </div>
         </div>
@@ -719,10 +761,13 @@ export default function LandingPage() {
       <section style={{ padding: '4rem 0', background: 'var(--bg-card)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <span className="badge badge-indigo" style={{ marginBottom: '0.5rem' }}>Student Success</span>
+            <span className="badge badge-indigo" style={{ marginBottom: '0.5rem' }}>Student Case Studies</span>
             <h2 style={{ fontSize: '2.1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-              Trusted By Scholars Across India
+              Simulated Beneficiary Journeys
             </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '620px', margin: '0.4rem auto 0' }}>
+              Illustrative student profiles modeled after actual recipients across premier Indian technical & state universities.
+            </p>
           </div>
 
           <div className="grid-cols-3 gap-6">

@@ -83,15 +83,17 @@ export function calculateEligibilityMatch(student, scholarship) {
 
   if (!studentPercentage) {
     missingInfo.push('Enter your recent academic percentage or CGPA in Profile.');
-    totalScore += 10;
+    totalScore += 8;
   } else if (studentPercentage >= minPercentage) {
     totalScore += 25;
     matchedReasons.push(`Academic merit satisfied: Your score of ${studentPercentage}% exceeds required minimum of ${minPercentage}%.`);
-  } else if (studentPercentage >= minPercentage - 5) {
-    totalScore += 12;
-    unmatchedReasons.push(`Borderline academic score: Required minimum is ${minPercentage}%, while your score is ${studentPercentage}%.`);
+  } else if (studentPercentage >= minPercentage - 3) {
+    totalScore += 10;
+    hardBlock = true;
+    unmatchedReasons.push(`Academic criterion unmet: Required minimum is ${minPercentage}%, your score is ${studentPercentage}% (borderline below cutoff).`);
   } else {
-    unmatchedReasons.push(`Academic criterion unmet: Required minimum is ${minPercentage}%, your score is ${studentPercentage}%.`);
+    hardBlock = true;
+    unmatchedReasons.push(`Academic criterion unmet: Required cutoff is ${minPercentage}%, while your registered score is ${studentPercentage}%.`);
   }
 
   // 5. EDUCATION LEVEL & COURSE (Weight: 10 pts)
@@ -138,18 +140,21 @@ export function calculateEligibilityMatch(student, scholarship) {
   // Apply Hard Block penalties to realistic score
   let finalScore = Math.min(100, Math.max(10, totalScore));
   if (hardBlock) {
-    finalScore = Math.min(38, Math.round(finalScore * 0.4));
+    finalScore = Math.min(28, Math.round(finalScore * 0.35));
   }
 
   // Determine Grade
-  let grade = 'Moderate';
-  if (finalScore >= 85) grade = 'Excellent Match';
+  let grade = 'Moderate Match';
+  if (hardBlock) grade = 'Ineligible / Criteria Unmet';
+  else if (finalScore >= 85) grade = 'Excellent Match';
   else if (finalScore >= 70) grade = 'Strong Match';
   else if (finalScore >= 50) grade = 'Moderate Match';
-  else grade = 'Low Match / Ineligible';
+  else grade = 'Low Match';
 
   let summary = '';
-  if (finalScore >= 85) {
+  if (hardBlock) {
+    summary = 'Mandatory qualifying criteria unmet (e.g. income limit, gender reservation, cutoff score, or category).';
+  } else if (finalScore >= 85) {
     summary = 'Outstanding fit! You satisfy all primary criteria including merit, income, and category.';
   } else if (finalScore >= 70) {
     summary = 'High probability of selection! Most core benchmarks are satisfied.';

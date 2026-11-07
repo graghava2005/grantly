@@ -78,6 +78,11 @@
   --accent-rose-light: #4c0519;
 }
 
+[data-theme="dark"] .badge-indigo { color: #a5b4fc; }
+[data-theme="dark"] .badge-emerald { color: #34d399; }
+[data-theme="dark"] .badge-amber { color: #fbbf24; }
+[data-theme="dark"] .badge-rose { color: #fb7185; }
+
 * {
   margin: 0;
   padding: 0;
@@ -530,4 +535,29 @@ a {
   .grid-cols-4, .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
   .navbar { height: 64px; }
   .container { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .btn-lg {
+    padding: 0.65rem 1.15rem;
+    font-size: 0.9375rem;
+  }
+  .modal-content {
+    max-width: 96vw !important;
+    border-radius: var(--radius-lg);
+  }
+  .toast {
+    min-width: 260px;
+    max-width: calc(100vw - 2rem);
+  }
+  .floating-ai-trigger span {
+    display: none;
+  }
+  .floating-ai-trigger {
+    padding: 0 !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    justify-content: center;
+  }
 }

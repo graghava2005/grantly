@@ -21,6 +21,7 @@ export default function ApplicationTracker() {
   const {
     applications,
     updateApplicationStatus,
+    deleteApplication,
     scholarships,
     addApplication,
     openScholarshipDetails,
@@ -211,13 +212,22 @@ export default function ApplicationTracker() {
                       <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>
                         {app.matchScore}% Match
                       </span>
-                      <button
-                        onClick={() => openEditModal(app)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-                        title="Edit status & notes"
-                      >
-                        <Edit3 size={14} />
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => openEditModal(app)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}
+                          title="Edit status & notes"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                        <button
+                          onClick={() => deleteApplication(app.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-rose)', padding: '2px' }}
+                          title="Remove from tracker"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
 
                     <h4
@@ -352,14 +362,14 @@ export default function ApplicationTracker() {
                 <button
                   type="button"
                   onClick={() => {
-                    // Remove from applications
-                    updateApplicationStatus(activeEditingApp.id, 'Rejected');
+                    deleteApplication(activeEditingApp.id);
                     setActiveEditingApp(null);
                   }}
                   className="btn btn-secondary btn-sm"
-                  style={{ color: 'var(--accent-rose)' }}
+                  style={{ color: 'var(--accent-rose)', borderColor: 'rgba(244, 63, 94, 0.3)' }}
                 >
-                  Mark Inactive
+                  <Trash2 size={14} />
+                  <span>Delete Record</span>
                 </button>
 
                 <button
