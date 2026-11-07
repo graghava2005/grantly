@@ -158,6 +158,8 @@ export default function ProfileSettings() {
             <img
               src={profile?.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200'}
               alt={formData.name}
+              loading="lazy"
+              decoding="async"
               style={{
                 width: '80px',
                 height: '80px',

@@ -190,6 +190,8 @@ export default function Navbar() {
                 <img
                   src={user.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200'}
                   alt={user.name}
+                  loading="lazy"
+                  decoding="async"
                   style={{
                     width: '32px',
                     height: '32px',
