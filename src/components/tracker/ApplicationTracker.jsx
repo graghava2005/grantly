@@ -45,11 +45,11 @@ export default function ApplicationTracker() {
   // Calculate high-level pipeline stats
   const approvedTotal = applications
     .filter(a => a.status === 'Approved')
-    .reduce((acc, curr) => acc + (curr.amount.includes('₹') ? parseInt(curr.amount.replace(/[^0-9]/g, '')) || 0 : 0), 0);
+    .reduce((acc, curr) => acc + (typeof curr.amount === 'string' && curr.amount.includes('₹') ? parseInt(curr.amount.replace(/[^0-9]/g, '')) || 0 : 0), 0);
 
   const pendingTotal = applications
     .filter(a => ['Applied', 'Under Review'].includes(a.status))
-    .reduce((acc, curr) => acc + (curr.amount.includes('₹') ? parseInt(curr.amount.replace(/[^0-9]/g, '')) || 0 : 0), 0);
+    .reduce((acc, curr) => acc + (typeof curr.amount === 'string' && curr.amount.includes('₹') ? parseInt(curr.amount.replace(/[^0-9]/g, '')) || 0 : 0), 0);
 
   const openEditModal = (app) => {
     setActiveEditingApp(app);

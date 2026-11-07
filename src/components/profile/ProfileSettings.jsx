@@ -45,6 +45,32 @@ export default function ProfileSettings() {
   const [activeTab, setActiveTab] = useState('general'); // 'general' | 'academics' | 'financial' | 'documents'
   const [documents, setDocuments] = useState(profile?.documentsUploaded || DEFAULT_DEMO_STUDENT.documentsUploaded);
 
+  React.useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || 'Aarav Sharma',
+        email: profile.email || 'aarav.sharma@student.in',
+        phone: profile.phone || '+91 98201 44521',
+        gender: profile.gender || 'Male',
+        category: profile.category || 'General',
+        educationLevel: profile.educationLevel || 'B.Tech',
+        course: profile.course || 'B.Tech (Computer Science)',
+        institution: profile.institution || 'Veermata Jijabai Technological Institute (VJTI)',
+        yearOfStudy: profile.yearOfStudy || '1st Year',
+        percentage: profile.percentage || 82.5,
+        class10Percentage: profile.class10Percentage || 88.4,
+        class12Percentage: profile.class12Percentage || 84.5,
+        familyIncome: profile.familyIncome || 240000,
+        domicileState: profile.domicileState || 'Maharashtra',
+        isDifferentlyAbled: profile.isDifferentlyAbled || false,
+        bio: profile.bio || 'Aspiring software engineer passionate about AI and distributed systems.'
+      });
+      if (profile.documentsUploaded) {
+        setDocuments(profile.documentsUploaded);
+      }
+    }
+  }, [profile]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
