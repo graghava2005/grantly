@@ -322,21 +322,21 @@ a {
 
 /* Hero Dashboard Preview Component */
 .hero-preview-container {
-  max-width: 1040px;
-  margin: 3.5rem auto 0;
+  max-width: 1060px;
+  margin: 1.75rem auto 0;
   position: relative;
   perspective: 1200px;
 }
 
 .hero-preview-glow {
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 85%;
-  height: 280px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(67, 56, 202, 0.15) 45%, transparent 70%);
-  filter: blur(55px);
+  width: 90%;
+  height: 240px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.32) 0%, rgba(67, 56, 202, 0.12) 50%, transparent 70%);
+  filter: blur(50px);
   z-index: 1;
   pointer-events: none;
 }
@@ -347,21 +347,21 @@ a {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  box-shadow: 0 25px 50px -12px rgba(16, 24, 40, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -10px rgba(16, 24, 40, 0.15), 0 0 0 1px rgba(99, 102, 241, 0.1);
   overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 
 .hero-preview-browser:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.25), 0 0 0 1px rgba(99, 102, 241, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 28px 56px -12px rgba(99, 102, 241, 0.22), 0 0 0 1px rgba(99, 102, 241, 0.25);
 }
 
 .browser-header-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.875rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   background: var(--bg-card-subtle);
   border-bottom: 1px solid var(--border-color);
 }
@@ -384,11 +384,11 @@ a {
   gap: 0.5rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.875rem;
   border-radius: var(--radius-full);
   font-size: 0.75rem;
   color: var(--text-muted);
-  width: min(380px, 60vw);
+  width: min(360px, 50vw);
 }
 
 /* Inputs */
