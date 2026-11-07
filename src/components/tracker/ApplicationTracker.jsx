@@ -33,6 +33,7 @@ export default function ApplicationTracker() {
   const [editingStatus, setEditingStatus] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedSchToAdd, setSelectedSchToAdd] = useState('');
+  const [mobileActiveStage, setMobileActiveStage] = useState('All');
 
   const stages = [
     { id: 'Interested', label: 'Interested', color: 'var(--text-secondary)', badgeClass: 'badge-neutral' },
@@ -148,16 +149,37 @@ export default function ApplicationTracker() {
         </div>
       </div>
 
+      {/* Mobile Stage Selector Tabs */}
+      <div className="kanban-stage-tabs">
+        <button
+          onClick={() => setMobileActiveStage('All')}
+          className={`btn btn-sm ${mobileActiveStage === 'All' ? 'btn-primary' : 'btn-secondary'}`}
+          style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap' }}
+          aria-label="View all stages"
+        >
+          All Stages ({applications.length})
+        </button>
+        {stages.map((st) => {
+          const count = applications.filter(a => a.status === st.id).length;
+          return (
+            <button
+              key={st.id}
+              onClick={() => setMobileActiveStage(st.id)}
+              className={`btn btn-sm ${mobileActiveStage === st.id ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap' }}
+              aria-label={`Filter by ${st.label}`}
+            >
+              {st.label} ({count})
+            </button>
+          );
+        })}
+      </div>
+
       {/* KANBAN BOARD 6-COLUMN GRID */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.25rem',
-          alignItems: 'start'
-        }}
-      >
-        {stages.map((stage) => {
+      <div className="kanban-board-grid">
+        {stages
+          .filter(stage => mobileActiveStage === 'All' || stage.id === mobileActiveStage)
+          .map((stage) => {
           const itemsInStage = applications.filter(a => a.status === stage.id);
 
           return (
@@ -217,6 +239,7 @@ export default function ApplicationTracker() {
                           onClick={() => openEditModal(app)}
                           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}
                           title="Edit status & notes"
+                          aria-label={`Edit ${app.title} notes and status`}
                         >
                           <Edit3 size={14} />
                         </button>
@@ -224,6 +247,7 @@ export default function ApplicationTracker() {
                           onClick={() => deleteApplication(app.id)}
                           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-rose)', padding: '2px' }}
                           title="Remove from tracker"
+                          aria-label={`Remove ${app.title} from tracker`}
                         >
                           <Trash2 size={14} />
                         </button>

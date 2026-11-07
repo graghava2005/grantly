@@ -153,7 +153,7 @@ export default function ScholarshipDiscovery() {
   };
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem 4rem' }}>
       {/* Title & Subtitle */}
       <div className="flex justify-between items-end wrap gap-4" style={{ marginBottom: '2rem' }}>
         <div>
@@ -188,6 +188,7 @@ export default function ScholarshipDiscovery() {
               color: viewMode === 'grid' ? 'var(--accent-violet)' : 'var(--text-secondary)'
             }}
             title="Grid View"
+            aria-label="Switch to Grid View"
           >
             <LayoutGrid size={18} />
           </button>
@@ -202,6 +203,7 @@ export default function ScholarshipDiscovery() {
               color: viewMode === 'list' ? 'var(--accent-violet)' : 'var(--text-secondary)'
             }}
             title="List View"
+            aria-label="Switch to List View"
           >
             <List size={18} />
           </button>
@@ -209,30 +211,33 @@ export default function ScholarshipDiscovery() {
       </div>
 
       {/* SEARCH AND FILTER BAR */}
-      <div className="card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+      <div className="card" style={{ padding: '1.25rem', marginBottom: '2rem' }}>
         {/* Top search & Sort row */}
-        <div className="flex gap-4 wrap items-center" style={{ marginBottom: '1.25rem' }}>
-          <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
+        <div className="discovery-search-row">
+          <div className="discovery-search-input-wrap">
             <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '13px' }} />
             <input
               type="text"
-              placeholder="Search by scholarship title, provider (e.g. Reliance, AICTE), stream, or keywords..."
+              placeholder="Search by scholarship title, provider (e.g. Reliance, AICTE), stream..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input"
               style={{ paddingLeft: '38px' }}
+              aria-label="Search scholarships directory"
             />
           </div>
 
-          <div className="flex items-center gap-2 wrap">
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+          <div className="discovery-sort-wrap">
+            <label htmlFor="discovery-sort-select" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
               Sort By:
             </label>
             <select
+              id="discovery-sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="select"
-              style={{ width: 'auto', minWidth: '170px' }}
+              style={{ width: 'auto' }}
+              aria-label="Sort scholarships"
             >
               <option value="matchScore">Best Match % (AI)</option>
               <option value="deadline">Deadline (Urgent First)</option>
@@ -243,7 +248,7 @@ export default function ScholarshipDiscovery() {
         </div>
 
         {/* Filter controls row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', alignItems: 'center' }}>
+        <div className="discovery-filters-grid">
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>
               Scheme Category
@@ -383,7 +388,7 @@ export default function ScholarshipDiscovery() {
           </button>
         </div>
       ) : viewMode === 'grid' ? (
-        <div className="grid-cols-3 gap-6">
+        <div className="scholarship-card-grid">
           {filteredScholarships.map((scholarship) => {
             const isSaved = savedIds.includes(scholarship.id);
             const isCompared = compareList.includes(scholarship.id);
@@ -436,6 +441,7 @@ export default function ScholarshipDiscovery() {
                       className="btn btn-secondary btn-icon"
                       style={{ width: '32px', height: '32px', borderRadius: '50%' }}
                       title={isSaved ? 'Remove Bookmark' : 'Bookmark Scholarship'}
+                      aria-label={isSaved ? 'Remove Bookmark' : 'Bookmark Scholarship'}
                     >
                       <Bookmark size={14} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
                     </button>
@@ -499,6 +505,7 @@ export default function ScholarshipDiscovery() {
                     className={`btn btn-sm ${isCompared ? 'btn-emerald' : 'btn-secondary'}`}
                     style={{ padding: '0.375rem 0.65rem' }}
                     title={isCompared ? 'Remove from compare' : 'Add to compare table'}
+                    aria-label={isCompared ? 'Remove from comparison basket' : 'Add to comparison basket'}
                   >
                     <GitCompare size={14} />
                     <span style={{ fontSize: '0.75rem' }}>{isCompared ? 'Added' : 'Compare'}</span>
@@ -518,17 +525,9 @@ export default function ScholarshipDiscovery() {
             return (
               <div
                 key={scholarship.id}
-                className="card"
-                style={{
-                  padding: '1.25rem 1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1.5rem',
-                  flexWrap: 'wrap'
-                }}
+                className="card scholarship-list-card"
               >
-                <div style={{ flex: '1 1 320px' }}>
+                <div style={{ flex: '1 1 240px', minWidth: 0 }}>
                   <div className="flex items-center gap-2" style={{ marginBottom: '0.35rem' }}>
                     <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>{scholarship.category}</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{scholarship.provider}</span>
@@ -544,7 +543,7 @@ export default function ScholarshipDiscovery() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 wrap">
                   <div>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>Grant Award</span>
                     <strong style={{ color: 'var(--accent-emerald)', fontSize: '1.05rem' }}>{scholarship.awardAmount}</strong>
@@ -562,18 +561,23 @@ export default function ScholarshipDiscovery() {
                       onClick={() => toggleSaveScholarship(scholarship.id)}
                       className="btn btn-secondary btn-icon"
                       style={{ width: '36px', height: '36px', borderRadius: '50%' }}
+                      title={isSaved ? 'Remove bookmark' : 'Bookmark scholarship'}
+                      aria-label={isSaved ? 'Remove bookmark' : 'Bookmark scholarship'}
                     >
                       <Bookmark size={15} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
                     </button>
                     <button
                       onClick={() => toggleCompareScholarship(scholarship.id)}
                       className={`btn btn-sm ${isCompared ? 'btn-emerald' : 'btn-secondary'}`}
+                      title={isCompared ? 'Remove from compare' : 'Add to compare'}
+                      aria-label={isCompared ? 'Remove from comparison basket' : 'Add to comparison basket'}
                     >
                       <GitCompare size={14} />
                     </button>
                     <button
                       onClick={() => openScholarshipDetails(scholarship)}
                       className="btn btn-primary btn-sm"
+                      aria-label={`View details for ${scholarship.title}`}
                     >
                       Details
                     </button>

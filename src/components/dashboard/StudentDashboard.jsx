@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import CircularProgress from '../common/CircularProgress';
 import {
@@ -30,44 +30,63 @@ export default function StudentDashboard() {
     setIsChatOpen
   } = useApp();
 
-  // Metrics
-  const highMatchScholarships = scholarships.filter(s => s.matchScore >= 80);
-  const savedScholarships = scholarships.filter(s => savedIds.includes(s.id));
-  const activeApplications = applications.filter(a => a.status !== 'Rejected');
-  const submittedCount = applications.filter(a => ['Applied', 'Under Review', 'Approved'].includes(a.status)).length;
+  // Memoized Metrics
+  const highMatchScholarships = useMemo(
+    () => scholarships.filter(s => s.matchScore >= 80),
+    [scholarships]
+  );
+
+  const savedScholarships = useMemo(
+    () => scholarships.filter(s => savedIds.includes(s.id)),
+    [scholarships, savedIds]
+  );
+
+  const activeApplications = useMemo(
+    () => applications.filter(a => a.status !== 'Rejected'),
+    [applications]
+  );
+
+  const submittedCount = useMemo(
+    () => applications.filter(a => ['Applied', 'Under Review', 'Approved'].includes(a.status)).length,
+    [applications]
+  );
 
   // Upcoming deadlines (sort by daysLeft ascending)
-  const upcomingDeadlines = [...scholarships]
-    .filter(s => s.daysLeft > 0)
-    .sort((a, b) => a.daysLeft - b.daysLeft)
-    .slice(0, 4);
+  const upcomingDeadlines = useMemo(
+    () => [...scholarships]
+      .filter(s => s.daysLeft > 0)
+      .sort((a, b) => a.daysLeft - b.daysLeft)
+      .slice(0, 4),
+    [scholarships]
+  );
 
   // Profile completion calculation
-  const profileFields = [
+  const profileFields = useMemo(() => [
     { label: 'Basic Info & Email', done: Boolean(profile?.email && profile?.name) },
     { label: 'Category & Gender', done: Boolean(profile?.category && profile?.gender) },
     { label: 'Academic Percentage', done: Boolean(profile?.percentage) },
     { label: 'Annual Household Income', done: Boolean(profile?.familyIncome) },
     { label: 'Domicile State', done: Boolean(profile?.domicileState) },
     { label: 'Uploaded Documents', done: Boolean(profile?.documentsUploaded && profile.documentsUploaded.length >= 3) }
-  ];
+  ], [profile]);
+
   const completedFieldsCount = profileFields.filter(f => f.done).length;
   const profileCompletionPercent = Math.round((completedFieldsCount / profileFields.length) * 100);
 
   // Application Stage breakdown for native SVG chart
-  const stageCounts = {
+  const stageCounts = useMemo(() => ({
     Interested: applications.filter(a => a.status === 'Interested').length,
     'Preparing Docs': applications.filter(a => a.status === 'Preparing Documents').length,
     Applied: applications.filter(a => a.status === 'Applied').length,
     'Under Review': applications.filter(a => a.status === 'Under Review').length,
     Approved: applications.filter(a => a.status === 'Approved').length,
     Rejected: applications.filter(a => a.status === 'Rejected').length
-  };
+  }), [applications]);
 
   const totalApps = applications.length || 1;
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem 4rem' }}>
       {/* 1. WELCOME HEADER */}
       <div
         className="card"
@@ -128,7 +147,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* 2. TOP KPI CARDS */}
-      <div className="grid-cols-4 gap-6" style={{ marginBottom: '2.5rem' }}>
+      <div className="dashboard-stats-grid">
         {/* KPI 1 */}
         <div className="card" style={{ padding: '1.5rem' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
@@ -195,7 +214,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* 3. MAIN DASHBOARD CONTENT (2 COLUMN GRID) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
+      <div className="dashboard-main-grid">
         {/* Left Column: Top Recommended Scholarships */}
         <div className="flex-col gap-4">
           <div className="flex justify-between items-center">

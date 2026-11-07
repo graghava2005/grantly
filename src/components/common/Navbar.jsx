@@ -90,6 +90,7 @@ export default function Navbar() {
               </span>
             </div>
             <span
+              className="navbar-brand-tagline"
               style={{
                 fontSize: '0.72rem',
                 color: 'var(--text-muted)',
@@ -104,7 +105,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="flex items-center gap-1" style={{ display: 'none' }} id="desktop-nav">
+        <nav className="navbar-desktop-nav">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -153,6 +154,7 @@ export default function Navbar() {
               color: 'var(--accent-violet)'
             }}
             title="Open Grantly AI Assistant"
+            aria-label="Open Grantly AI Assistant"
           >
             <Sparkles size={15} />
             <span style={{ fontWeight: 700 }}>AI Advisor</span>
@@ -182,6 +184,8 @@ export default function Navbar() {
                   padding: '0.25rem 0.75rem 0.25rem 0.35rem',
                   cursor: 'pointer'
                 }}
+                aria-label="User profile menu"
+                aria-expanded={profileDropdownOpen}
               >
                 <img
                   src={user.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200'}
@@ -194,7 +198,7 @@ export default function Navbar() {
                     border: '2px solid var(--accent-violet)'
                   }}
                 />
-                <div className="flex-col items-start" style={{ textAlign: 'left', display: 'none' }} id="user-name-text">
+                <div className="navbar-user-name">
                   <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                     {user.name.split(' ')[0]}
                   </span>
@@ -314,10 +318,11 @@ export default function Navbar() {
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="btn btn-secondary btn-icon"
+            className="btn btn-secondary btn-icon navbar-mobile-toggle"
             style={{ borderRadius: 'var(--radius-md)', width: '38px', height: '38px' }}
-            id="mobile-menu-btn"
             aria-label="Toggle mobile navigation"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-drawer"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -327,6 +332,7 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div
+          id="mobile-nav-drawer"
           style={{
             position: 'absolute',
             top: '72px',
@@ -415,15 +421,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-
-      {/* Media query styling inline helper */}
-      <style>{`
-        @media (min-width: 860px) {
-          #desktop-nav { display: flex !important; }
-          #mobile-menu-btn { display: none !important; }
-          #user-name-text { display: flex !important; }
-        }
-      `}</style>
     </header>
   );
 }

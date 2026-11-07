@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import ToastContainer from './components/common/ToastContainer';
@@ -83,6 +84,7 @@ function MainAppContent() {
           }}
           className="pulse-badge floating-ai-trigger"
           title="Open Grantly AI Advisor"
+          aria-label="Open Grantly AI Advisor"
         >
           <Sparkles size={18} />
           <span>Ask Grantly AI</span>
@@ -94,8 +96,10 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <MainAppContent />
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <MainAppContent />
+      </AppProvider>
+    </ErrorBoundary>
   );
 }

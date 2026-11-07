@@ -70,7 +70,7 @@ export default function EligibilityCalculator() {
   ];
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem 4rem' }}>
       {/* Page Header */}
       <div style={{ marginBottom: '2.5rem' }}>
         <div className="flex items-center gap-2" style={{ marginBottom: '0.4rem' }}>
@@ -115,7 +115,7 @@ export default function EligibilityCalculator() {
       </div>
 
       {/* TWO-COLUMN AUDIT VIEW */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+      <div className="calculator-layout-grid">
         {/* Left Column: Live Calculation Result Card */}
         <div className="flex-col gap-4">
           <div

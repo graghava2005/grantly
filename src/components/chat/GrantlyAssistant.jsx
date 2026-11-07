@@ -168,12 +168,8 @@ export default function GrantlyAssistant() {
 
   return (
     <div
+      className="chat-assistant-drawer"
       style={{
-        position: 'fixed',
-        bottom: '1.5rem',
-        right: '1.5rem',
-        width: 'min(440px, 94vw)',
-        height: 'min(620px, 85vh)',
         background: 'var(--bg-card)',
         borderRadius: 'var(--radius-xl)',
         boxShadow: 'var(--shadow-xl), 0 0 30px rgba(99, 102, 241, 0.25)',
@@ -223,6 +219,7 @@ export default function GrantlyAssistant() {
         <button
           onClick={() => setIsChatOpen(false)}
           style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: '4px' }}
+          aria-label="Close Grantly AI Advisor"
         >
           <X size={20} />
         </button>

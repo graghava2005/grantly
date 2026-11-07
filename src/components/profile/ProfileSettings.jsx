@@ -120,7 +120,7 @@ export default function ProfileSettings() {
   ];
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem 4rem' }}>
       {/* Title */}
       <div className="flex justify-between items-end wrap gap-4" style={{ marginBottom: '2rem' }}>
         <div>
@@ -151,7 +151,7 @@ export default function ProfileSettings() {
       </div>
 
       {/* Main Layout Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+      <div className="profile-layout-grid">
         {/* Left Nav & Summary */}
         <div className="card" style={{ padding: '1.5rem' }}>
           <div className="flex-col items-center" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>

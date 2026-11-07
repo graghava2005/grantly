@@ -36,7 +36,7 @@ export default function ScholarshipCompare() {
   const availableToAdd = scholarships.filter(s => !compareList.includes(s.id));
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem 4rem' }}>
       {/* Header */}
       <div className="flex justify-between items-end wrap gap-4" style={{ marginBottom: '2rem' }}>
         <div>
@@ -71,7 +71,7 @@ export default function ScholarshipCompare() {
                   position: 'absolute',
                   top: '110%',
                   right: 0,
-                  width: '320px',
+                  width: 'min(320px, calc(100vw - 2.5rem))',
                   maxHeight: '300px',
                   overflowY: 'auto',
                   background: 'var(--bg-card)',
@@ -177,6 +177,7 @@ export default function ScholarshipCompare() {
                         onClick={() => removeFromCompare(item.id)}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
                         title="Remove from comparison"
+                        aria-label={`Remove ${item.title} from comparison`}
                       >
                         <X size={18} />
                       </button>

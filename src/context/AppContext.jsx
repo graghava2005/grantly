@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { SCHOLARSHIPS_DATA } from '../data/scholarships';
 import { DEFAULT_DEMO_STUDENT, INITIAL_APPLICATIONS, INITIAL_SAVED_IDS } from '../data/initialUserData';
 import { calculateEligibilityMatch } from '../utils/eligibilityEngine';
@@ -76,27 +76,30 @@ export const AppProvider = ({ children }) => {
     });
   }, [profile]);
 
-  // Toast dispatch
-  const notify = (message, type = 'info') => {
+  // Toast dispatch (stable callback)
+  const notify = useCallback((message, type = 'info') => {
     const id = Date.now() + Math.random().toString();
     setToasts(prev => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4000);
-  };
+  }, []);
 
-  const removeToast = (id) => {
+  const removeToast = useCallback((id) => {
     setToasts(prev => prev.filter(t => t.id !== id));
-  };
+  }, []);
 
   // Toggle Theme
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    notify(`Switched to ${theme === 'light' ? 'Dark' : 'Light'} Mode`, 'info');
-  };
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      notify(`Switched to ${next === 'dark' ? 'Dark' : 'Light'} Mode`, 'info');
+      return next;
+    });
+  }, [notify]);
 
   // Toggle Save / Bookmark
-  const toggleSaveScholarship = (id) => {
+  const toggleSaveScholarship = useCallback((id) => {
     setSavedIds(prev => {
       const exists = prev.includes(id);
       if (exists) {
@@ -107,10 +110,10 @@ export const AppProvider = ({ children }) => {
         return [...prev, id];
       }
     });
-  };
+  }, [notify]);
 
   // Toggle Compare
-  const toggleCompareScholarship = (id) => {
+  const toggleCompareScholarship = useCallback((id) => {
     setCompareList(prev => {
       if (prev.includes(id)) {
         notify('Removed from comparison table', 'info');
@@ -123,43 +126,43 @@ export const AppProvider = ({ children }) => {
       notify('Added to comparison! Open the Compare tab to inspect side by side.', 'success');
       return [...prev, id];
     });
-  };
+  }, [notify]);
 
-  const removeFromCompare = (id) => {
+  const removeFromCompare = useCallback((id) => {
     setCompareList(prev => prev.filter(item => item !== id));
     notify('Scholarship removed from comparison', 'info');
-  };
+  }, [notify]);
 
   // Open & Close Details Modal
-  const openScholarshipDetails = (scholarship) => {
+  const openScholarshipDetails = useCallback((scholarship) => {
     // Look up augmented version with match details
     const found = augmentedScholarships.find(s => s.id === scholarship.id) || scholarship;
     setSelectedScholarship(found);
-  };
+  }, [augmentedScholarships]);
 
-  const closeScholarshipDetails = () => {
+  const closeScholarshipDetails = useCallback(() => {
     setSelectedScholarship(null);
-  };
+  }, []);
 
   // Discovery Filter State for Cross-Page Deep-Linking
   const [discoveryFilter, setDiscoveryFilter] = useState('All');
 
-  const navigateToDiscovery = (category = 'All') => {
+  const navigateToDiscovery = useCallback((category = 'All') => {
     setDiscoveryFilter(category);
     setActiveTab('discovery');
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
+  }, []);
 
   // Delete Application from Tracker
-  const deleteApplication = (appId) => {
+  const deleteApplication = useCallback((appId) => {
     setApplications(prev => prev.filter(app => app.id !== appId));
     notify('Application removed from tracker', 'info');
-  };
+  }, [notify]);
 
   // Update Application in Tracker
-  const updateApplicationStatus = (appId, newStatus, newNotes = null) => {
+  const updateApplicationStatus = useCallback((appId, newStatus, newNotes = null) => {
     setApplications(prev =>
       prev.map(app => {
         if (app.id === appId) {
@@ -174,10 +177,10 @@ export const AppProvider = ({ children }) => {
       })
     );
     notify(`Application status updated to "${newStatus}"`, 'success');
-  };
+  }, [notify]);
 
   // Add Application to Tracker
-  const addApplication = (scholarship, initialStatus = 'Interested') => {
+  const addApplication = useCallback((scholarship, initialStatus = 'Interested') => {
     const existing = applications.find(a => a.scholarshipId === scholarship.id);
     if (existing) {
       notify(`This scholarship is already in your tracker (Status: ${existing.status}).`, 'info');
@@ -202,91 +205,123 @@ export const AppProvider = ({ children }) => {
 
     setApplications(prev => [newApp, ...prev]);
     notify(`"${scholarship.title}" added to your Application Tracker!`, 'success');
-    if (selectedScholarship) setSelectedScholarship(null);
-  };
+    setSelectedScholarship(null);
+  }, [applications, notify]);
 
   // Update Profile
-  const updateProfile = (updatedFields) => {
+  const updateProfile = useCallback((updatedFields) => {
     setProfile(prev => {
       const next = { ...prev, ...updatedFields };
-      if (user) {
-        setUser(next);
-      }
+      setUser(current => (current ? { ...current, ...updatedFields } : current));
       return next;
     });
     notify('Profile updated! Match scores recalculated across all scholarships.', 'success');
-  };
+  }, [notify]);
 
   // Login Demo Student
-  const loginDemoUser = () => {
+  const loginDemoUser = useCallback(() => {
     setUser(DEFAULT_DEMO_STUDENT);
     setProfile(DEFAULT_DEMO_STUDENT);
     setIsAuthModalOpen(false);
     notify(`Welcome back, ${DEFAULT_DEMO_STUDENT.name}! Demo student session activated.`, 'success');
     setActiveTab('dashboard');
-  };
+  }, [notify]);
 
   // Custom User Login
-  const loginUser = (formData) => {
-    const loggedIn = {
-      ...profile,
-      name: formData.name || profile.name || 'Student Scholar',
-      email: formData.email
-    };
-    setUser(loggedIn);
-    setProfile(loggedIn);
+  const loginUser = useCallback((formData) => {
+    setProfile(prev => {
+      const loggedIn = {
+        ...prev,
+        name: formData.name || prev?.name || 'Student Scholar',
+        email: formData.email
+      };
+      setUser(loggedIn);
+      return loggedIn;
+    });
     setIsAuthModalOpen(false);
-    notify(`Welcome, ${loggedIn.name}! You are now logged in.`, 'success');
+    notify(`Welcome! You are now logged in.`, 'success');
     setActiveTab('dashboard');
-  };
+  }, [notify]);
 
   // Logout
-  const logoutUser = () => {
+  const logoutUser = useCallback(() => {
     setUser(null);
     notify('You have been logged out.', 'info');
     setActiveTab('landing');
-  };
+  }, [notify]);
+
+  // Memoized context value to prevent unnecessary cascading re-renders
+  const contextValue = useMemo(() => ({
+    theme,
+    toggleTheme,
+    user,
+    profile,
+    updateProfile,
+    activeTab,
+    setActiveTab,
+    scholarships: augmentedScholarships,
+    savedIds,
+    toggleSaveScholarship,
+    applications,
+    updateApplicationStatus,
+    deleteApplication,
+    addApplication,
+    discoveryFilter,
+    setDiscoveryFilter,
+    navigateToDiscovery,
+    compareList,
+    toggleCompareScholarship,
+    removeFromCompare,
+    selectedScholarship,
+    openScholarshipDetails,
+    closeScholarshipDetails,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    authMode,
+    setAuthMode,
+    isChatOpen,
+    setIsChatOpen,
+    toasts,
+    notify,
+    removeToast,
+    loginDemoUser,
+    loginUser,
+    logoutUser
+  }), [
+    theme,
+    toggleTheme,
+    user,
+    profile,
+    updateProfile,
+    activeTab,
+    augmentedScholarships,
+    savedIds,
+    toggleSaveScholarship,
+    applications,
+    updateApplicationStatus,
+    deleteApplication,
+    addApplication,
+    discoveryFilter,
+    navigateToDiscovery,
+    compareList,
+    toggleCompareScholarship,
+    removeFromCompare,
+    selectedScholarship,
+    openScholarshipDetails,
+    closeScholarshipDetails,
+    isAuthModalOpen,
+    authMode,
+    isChatOpen,
+    toasts,
+    notify,
+    removeToast,
+    loginDemoUser,
+    loginUser,
+    logoutUser
+  ]);
 
   return (
-    <AppContext.Provider
-      value={{
-        theme,
-        toggleTheme,
-        user,
-        profile,
-        updateProfile,
-        activeTab,
-        setActiveTab,
-        scholarships: augmentedScholarships,
-        savedIds,
-        toggleSaveScholarship,
-        applications,
-        updateApplicationStatus,
-        deleteApplication,
-        addApplication,
-        discoveryFilter,
-        setDiscoveryFilter,
-        navigateToDiscovery,
-        compareList,
-        toggleCompareScholarship,
-        removeFromCompare,
-        selectedScholarship,
-        openScholarshipDetails,
-        closeScholarshipDetails,
-        isAuthModalOpen,
-        setIsAuthModalOpen,
-        authMode,
-        setAuthMode,
-        isChatOpen,
-        setIsChatOpen,
-        toasts,
-        notify,
-        removeToast,
-        loginDemoUser,
-        loginUser,
-        logoutUser
-      }}
-    >
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

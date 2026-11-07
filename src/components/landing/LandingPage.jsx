@@ -284,7 +284,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* 3 Interactive Cards Inside Preview */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '0.875rem' }}>
+                <div className="hero-preview-cards-grid">
                   {/* Mock Card 1 */}
                   <div
                     className="card"
@@ -445,7 +445,7 @@ export default function LandingPage() {
           </div>
 
           {/* 6 Responsive Cards */}
-          <div className="grid-cols-3 gap-6">
+          <div className="scholarship-card-grid">
             {featuredSchemes.map((scholarship) => {
               const isSaved = savedIds.includes(scholarship.id);
 
@@ -482,6 +482,7 @@ export default function LandingPage() {
                           className="btn btn-secondary btn-icon"
                           style={{ width: '32px', height: '32px', borderRadius: '50%' }}
                           title={isSaved ? 'Remove bookmark' : 'Bookmark scholarship'}
+                          aria-label={isSaved ? 'Remove bookmark' : 'Bookmark scholarship'}
                         >
                           <Bookmark size={14} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
                         </button>
@@ -574,7 +575,7 @@ export default function LandingPage() {
       {/* 3. LIVE STATISTICS RIBBON */}
       <section style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-card)', padding: '2.5rem 0' }}>
         <div className="container">
-          <div className="grid-cols-4 gap-6" style={{ textAlign: 'center' }}>
+          <div className="stat-ribbon-grid">
             <div style={{ padding: '0.5rem' }}>
               <div style={{ fontSize: '2.3rem', fontWeight: 800, color: 'var(--primary-indigo)', letterSpacing: '-0.02em' }}>
                 ₹500Cr+

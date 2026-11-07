@@ -84,6 +84,7 @@ export default function ScholarshipDetailsModal() {
               onClick={closeScholarshipDetails}
               className="btn btn-secondary btn-icon"
               style={{ width: '36px', height: '36px', borderRadius: '50%' }}
+              aria-label="Close scholarship details dialog"
             >
               <X size={18} />
             </button>
@@ -297,7 +298,7 @@ export default function ScholarshipDetailsModal() {
           style={{
             background: 'var(--bg-card)',
             borderTop: '1px solid var(--border-color)',
-            padding: '1.25rem 2rem',
+            padding: '1.25rem 1.25rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -305,10 +306,11 @@ export default function ScholarshipDetailsModal() {
             gap: '1rem'
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 wrap">
             <button
               onClick={() => toggleSaveScholarship(selectedScholarship.id)}
               className="btn btn-secondary"
+              aria-label={isSaved ? 'Remove from saved bookmarks' : 'Save scholarship to bookmarks'}
             >
               <Bookmark size={16} fill={isSaved ? 'var(--accent-violet)' : 'none'} color={isSaved ? 'var(--accent-violet)' : 'currentColor'} />
               <span>{isSaved ? 'Saved in Bookmarks' : 'Save Scholarship'}</span>
@@ -317,6 +319,7 @@ export default function ScholarshipDetailsModal() {
             <button
               onClick={() => toggleCompareScholarship(selectedScholarship.id)}
               className={`btn ${isCompared ? 'btn-emerald' : 'btn-secondary'}`}
+              aria-label={isCompared ? 'Remove from comparison basket' : 'Add to comparison basket'}
             >
               <GitCompare size={16} />
               <span>{isCompared ? 'In Compare Table' : 'Compare'}</span>
@@ -330,6 +333,8 @@ export default function ScholarshipDetailsModal() {
             <button
               onClick={handleApply}
               className="btn btn-primary btn-lg"
+              style={{ whiteSpace: 'normal', textAlign: 'center' }}
+              aria-label="Apply on Official Portal and track application"
             >
               <span>Apply on Official Portal & Track</span>
               <ExternalLink size={16} />
